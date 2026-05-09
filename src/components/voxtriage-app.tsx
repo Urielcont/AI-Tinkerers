@@ -379,6 +379,11 @@ export function VoxTriageApp() {
     void runTranscriptAnalysis(script.transcript);
   }
 
+  function handleFollowUpAnswer(answer: string) {
+    setTranscript(prev => prev + "\nPaciente (seguimiento): " + answer);
+    void runTranscriptAnalysis(transcript + "\n" + answer);
+  }
+
   return (
     <main className="relative overflow-hidden">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(191,88,62,0.18),transparent_30%),radial-gradient(circle_at_top_right,rgba(21,90,84,0.22),transparent_28%),linear-gradient(180deg,#f6efe5,#efe4d6_45%,#ece4d9)]" />
@@ -400,7 +405,11 @@ export function VoxTriageApp() {
 
         {hasResults && (
           <div className="mt-8">
-            <TriageStage session={session} runtimeError={runtimeError} />
+            <TriageStage 
+              session={session} 
+              runtimeError={runtimeError} 
+              onFollowUpAnswer={handleFollowUpAnswer}
+            />
           </div>
         )}
       </div>

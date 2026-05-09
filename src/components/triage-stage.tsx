@@ -12,11 +12,13 @@ import { A2UIStage } from "@/components/a2ui-stage";
 import { FallbackSummary } from "@/components/fallback-summary";
 import { BodyHeatMap } from "@/components/body-heat-map";
 import { AgentActionUI } from "@/components/agent-action-ui";
+import { FollowUpInput } from "@/components/follow-up-input";
 import type { TriageSessionState } from "@/lib/triage-session";
 
 interface TriageStageProps {
   session: TriageSessionState;
   runtimeError: string | null;
+  onFollowUpAnswer: (answer: string) => void;
 }
 
 function severityLabel(level: number | null) {
@@ -26,7 +28,7 @@ function severityLabel(level: number | null) {
   return "Baja";
 }
 
-export function TriageStage({ session, runtimeError }: TriageStageProps) {
+export function TriageStage({ session, runtimeError, onFollowUpAnswer }: TriageStageProps) {
   const canRenderA2UI = !!session.a2uiSurface && !runtimeError;
 
   return (
@@ -92,6 +94,11 @@ export function TriageStage({ session, runtimeError }: TriageStageProps) {
               </div>
             )}
             <A2UIStage payload={session.a2uiSurface} />
+            {session.followUpQuestion && (
+              <div className="mt-4 border-t border-black/5 pt-4">
+                <FollowUpInput onAnswer={onFollowUpAnswer} />
+              </div>
+            )}
           </div>
         ) : (
           <div className="grid gap-6 lg:grid-cols-[240px_1fr]">
@@ -101,7 +108,12 @@ export function TriageStage({ session, runtimeError }: TriageStageProps) {
                   severity={session.urgencyLevel || 1} 
                 />
               </div>
-            <FallbackSummary session={session} errorMessage={runtimeError} />
+            <div className="flex flex-col gap-4">
+              <FallbackSummary session={session} errorMessage={runtimeError} />
+              {session.followUpQuestion && (
+                <FollowUpInput onAnswer={onFollowUpAnswer} />
+              )}
+            </div>
           </div>
         )}
       </motion.div>
